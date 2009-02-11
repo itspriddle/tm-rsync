@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>COCOADIALOG="$TM_SUPPORT_PATH/bin/CocoaDialog.app/Contents/MacOS/CocoaDialog"
+
+if [ ! -x "$COCOADIALOG" ]; then
+  echo Couldn\'t execute CocoaDialog in $COCOADIALOG
+  exit 1
+fi
+
+if [ "$SSH_KEY" != "" ] &amp;&amp; [ "$SSH_HOST" != "" ] &amp;&amp; [ "$SSH_USER" != "" ] &amp;&amp; [ "$SSH_REMOTE_PATH" != "" ]; then
+
+  if [ "$RSYNC_OPTIONS" != "" ]; then
+    OPTS="$RSYNC_OPTIONS"
+  fi
+
+  if [ "$RSYNC_EXCLUDE_FROM" != "" ]; then 
+    if [ -f "$RSYNC_EXCLUDE_FROM" ]; then
+      OPTS="$OPTS --exclude-from=$RSYNC_EXCLUDE_FROM"
+    elif [ -f "$TM_PROJECT_DIRECTORY/$RSYNC_EXCLUDE_FROM" ]; then
+      OPTS="$OPTS --exclude-from=$TM_PROJECT_DIRECTORY/$RSYNC_EXCLUDE_FROM"
+    fi
+  fi
+
+  #echo rsync -e "ssh -i $SSH_KEY" -auv $OPTS "$TM_PROJECT_DIRECTORY"/ "$SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH"
+
+  OUT=`rsync -e "ssh -i $SSH_KEY" -auv $OPTS "$TM_PROJECT_DIRECTORY"/ "$SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH" \
+    2&gt; &gt;($COCOADIALOG progressbar \
+    --indeterminate \
+    --text "rsyncing $TM_PROJECT_DIRECTORY/ with $SSH_HOST:$SSH_REMOTE_PATH" \
+    --title "Uploading files..." \
+  )`
+  #echo -e "$OUT"
+  $COCOADIALOG textbox \
+    --text "$OUT" \
+    --title "rsync Results" \
+    --informative-text "rsync Results from $SSH_HOST" \
+    --button1 "OK" \
+    ‑‑float
+else
+  $COCOADIALOG ok-msgbox \
+    --text "rsync variables are not set for this project" \
+    --title 'rsync Error' \
+    --informative-text 'Set $SSH_KEY, $SSH_HOST, $SSH_USER, and $SSH_REMOTE_PATH to continue.' \
+    --no-cancel \
+    --float
+fi</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>^@r</string>
+	<key>name</key>
+	<string>rsync Project Now!</string>
+	<key>output</key>
+	<string>discard</string>
+	<key>uuid</key>
+	<string>48010B3E-59E0-455B-9944-0FF758E406F8</string>
+</dict>
+</plist>
