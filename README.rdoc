@@ -5,6 +5,7 @@ Use this bundle to rsync your project directory with a remote host.  Invoke via 
 == Installation
 
 git clone git://github.com/jpriddle/tm-rsync.git ~/Library/Application\ Support/TextMate/Bundles/rsync.tmbundle
+
 osascript -e 'tell app "TextMate" to reload bundles'
 
 == Setup
