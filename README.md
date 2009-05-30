@@ -1,6 +1,6 @@
 # TextMate rsync Bundle
 
-Use this bundle to rsync your project directory with a remote host.  Invoke via ctrl+cmd+r
+Use this bundle to rsync your project directory with a remote host.  Invoke via **&#2303;+&#8984;+r**
 
 # Installation
 
