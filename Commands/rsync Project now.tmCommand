@@ -28,19 +28,8 @@ fi
 
 #echo rsync -e "ssh -i $SSH_KEY" -auv $OPTS "$TM_PROJECT_DIRECTORY"/ "$SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH"
 
-OUT=`rsync -e "ssh -i $SSH_KEY" -auv $OPTS "$TM_PROJECT_DIRECTORY"/ "$SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH" \
-  2&gt; &gt;($COCOADIALOG progressbar \
-  --indeterminate \
-  --text "rsyncing $TM_PROJECT_DIRECTORY/ with $SSH_HOST:$SSH_REMOTE_PATH" \
-  --title "Uploading files..." \
-)`
-#echo -e "$OUT"
-$COCOADIALOG textbox \
-  --text "$OUT" \
-  --title "rsync Results" \
-  --informative-text "rsync Results from $SSH_HOST" \
-  --button1 "OK" \
-  ‑‑float
+OUT=`rsync -e "ssh -i $SSH_KEY" -auv $OPTS "$TM_PROJECT_DIRECTORY"/ "$SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH"`
+echo -e "$OUT"
 else
 $COCOADIALOG ok-msgbox \
   --text "rsync variables are not set for this project" \
@@ -57,7 +46,7 @@ fi
 	<key>name</key>
 	<string>rsync Project now</string>
 	<key>output</key>
-	<string>showAsTooltip</string>
+	<string>openAsNewDocument</string>
 	<key>uuid</key>
 	<string>3CB55098-1709-444B-A3BE-E72680134CF0</string>
 </dict>
