@@ -5,20 +5,22 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>COCOADIALOG="$TM_SUPPORT_PATH/bin/CocoaDialog.app/Contents/MacOS/CocoaDialog"
+	<string>. "$TM_SUPPORT_PATH/lib/webpreview.sh"
 
-if [ ! -x "$COCOADIALOG" ]; then
-  echo Couldn\'t execute CocoaDialog in $COCOADIALOG
-  exit 1
+html_header "rsync Project"
+
+if [ "$SSH_HOST" = "" ] || [ "$SSH_REMOTE_PATH" = "" ]; then
+  echo -e "&lt;h3&gt;Error:&lt;/h3&gt;\n"
+  echo -e 'Set $SSH_HOST and $SSH_REMOTE_PATH to continue.'
+  html_footer
+  exit
 fi
-
-if [ "$SSH_KEY" != "" ] &amp;&amp; [ "$SSH_HOST" != "" ] &amp;&amp; [ "$SSH_USER" != "" ] &amp;&amp; [ "$SSH_REMOTE_PATH" != "" ]; then
 
 if [ "$RSYNC_OPTIONS" != "" ]; then
   OPTS="$RSYNC_OPTIONS"
 fi
 
-if [ "$RSYNC_EXCLUDE_FROM" != "" ]; then 
+if [ "$RSYNC_EXCLUDE_FROM" != "" ]; then
   if [ -f "$RSYNC_EXCLUDE_FROM" ]; then
     OPTS="$OPTS --exclude-from=$RSYNC_EXCLUDE_FROM"
   elif [ -f "$TM_PROJECT_DIRECTORY/$RSYNC_EXCLUDE_FROM" ]; then
@@ -26,18 +28,29 @@ if [ "$RSYNC_EXCLUDE_FROM" != "" ]; then
   fi
 fi
 
-#echo rsync -e "ssh -i $SSH_KEY" -auv $OPTS "$TM_PROJECT_DIRECTORY"/ "$SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH"
-
-OUT=`rsync -e "ssh -i $SSH_KEY" -auv $OPTS "$TM_PROJECT_DIRECTORY"/ "$SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH"`
-echo -e "$OUT"
+if [ "$SSH_KEY" != "" ]; then
+  SSH_CMD="ssh -i $SSH_KEY"
 else
-$COCOADIALOG ok-msgbox \
-  --text "rsync variables are not set for this project" \
-  --title 'rsync Error' \
-  --informative-text 'Set $SSH_KEY, $SSH_HOST, $SSH_USER, and $SSH_REMOTE_PATH to continue.' \
-  --no-cancel \
-  --float
+  SSH_CMD="ssh"
 fi
+
+REMOTE="$SSH_HOST:$SSH_REMOTE_PATH"
+
+if [ "$SSH_USER" != "" ]; then
+  REMOTE="$SSH_USER@$REMOTE"
+fi
+
+OUT=`rsync -e "$SSH_CMD" -auv $OPTS "$TM_PROJECT_DIRECTORY"/ "$REMOTE"`
+
+echo -e "&lt;h3&gt;rsync command:&lt;/h3&gt;\n"
+echo -e "&lt;pre&gt;"
+echo -e "rsync -e \"$SSH_CMD\" -auv $OPTS \"$TM_PROJECT_DIRECTORY\"/ \"$REMOTE\""
+echo -e "&lt;/pre&gt;\n"
+echo -e "&lt;h3&gt;Output:&lt;/h3&gt;\n"
+echo -e "&lt;pre&gt;"
+echo -e "$OUT"
+echo -e "&lt;/pre&gt;\n"
+html_footer
 </string>
 	<key>input</key>
 	<string>none</string>
@@ -46,7 +59,7 @@ fi
 	<key>name</key>
 	<string>rsync Project now</string>
 	<key>output</key>
-	<string>openAsNewDocument</string>
+	<string>showAsHTML</string>
 	<key>uuid</key>
 	<string>3CB55098-1709-444B-A3BE-E72680134CF0</string>
 </dict>
