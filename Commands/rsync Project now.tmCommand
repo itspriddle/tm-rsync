@@ -16,8 +16,10 @@ if [ "$SSH_HOST" = "" ] || [ "$SSH_REMOTE_PATH" = "" ]; then
   exit
 fi
 
+OPTS='-auv'
+
 if [ "$RSYNC_OPTIONS" != "" ]; then
-  OPTS="$RSYNC_OPTIONS"
+  OPTS="$OPTS $RSYNC_OPTIONS"
 fi
 
 if [ "$RSYNC_EXCLUDE_FROM" != "" ]; then
@@ -40,11 +42,11 @@ if [ "$SSH_USER" != "" ]; then
   REMOTE="$SSH_USER@$REMOTE"
 fi
 
-OUT=`rsync -e "$SSH_CMD" -auv $OPTS "$TM_PROJECT_DIRECTORY"/ "$REMOTE"`
+OUT=`rsync -e "$SSH_CMD" $OPTS "$TM_PROJECT_DIRECTORY"/ "$REMOTE"`
 
 echo -e "&lt;h3&gt;rsync command:&lt;/h3&gt;\n"
 echo -e "&lt;pre&gt;"
-echo -e "rsync -e \"$SSH_CMD\" -auv $OPTS \"$TM_PROJECT_DIRECTORY\"/ \"$REMOTE\""
+echo -e "rsync -e \"$SSH_CMD\" $OPTS \"$TM_PROJECT_DIRECTORY\"/ \"$REMOTE\""
 echo -e "&lt;/pre&gt;\n"
 echo -e "&lt;h3&gt;Output:&lt;/h3&gt;\n"
 echo -e "&lt;pre&gt;"
