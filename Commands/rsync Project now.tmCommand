@@ -5,55 +5,25 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>. "$TM_SUPPORT_PATH/lib/webpreview.sh"
+	<string>#!/usr/bin/env ruby
 
-html_header "rsync Project"
+require ENV['TM_BUNDLE_SUPPORT'] + '/lib/rsync'
 
-if [ "$SSH_HOST" = "" ] || [ "$SSH_REMOTE_PATH" = "" ]; then
-  echo -e "&lt;h3&gt;Error:&lt;/h3&gt;\n"
-  echo -e 'Set $SSH_HOST and $SSH_REMOTE_PATH to continue.'
-  html_footer
-  exit
-fi
+html_header 'rsync Project'
 
-OPTS='-auv'
+output, command = Rsync.execute!
 
-if [ "$RSYNC_OPTIONS" != "" ]; then
-  OPTS="$OPTS $RSYNC_OPTIONS"
-fi
-
-if [ "$RSYNC_EXCLUDE_FROM" != "" ]; then
-  if [ -f "$RSYNC_EXCLUDE_FROM" ]; then
-    OPTS="$OPTS --exclude-from=$RSYNC_EXCLUDE_FROM"
-  elif [ -f "$TM_PROJECT_DIRECTORY/$RSYNC_EXCLUDE_FROM" ]; then
-    OPTS="$OPTS --exclude-from=$TM_PROJECT_DIRECTORY/$RSYNC_EXCLUDE_FROM"
-  fi
-fi
-
-if [ "$SSH_KEY" != "" ]; then
-  SSH_CMD="ssh -i $SSH_KEY"
+# things went okay
+if command
+  puts "&lt;h3&gt;rsync command:&lt;/h3&gt;"
+  puts "&lt;pre&gt;#{command}&lt;/pre&gt;"
+  puts "&lt;h3&gt;Output:&lt;/h3&gt;"
 else
-  SSH_CMD="ssh"
-fi
+  puts "&lt;h3&gt;Error:&lt;/h3&gt;"
+end
 
-REMOTE="$SSH_HOST:$SSH_REMOTE_PATH"
+puts "&lt;pre&gt;#{output}&lt;/pre&gt;"
 
-if [ "$SSH_USER" != "" ]; then
-  REMOTE="$SSH_USER@$REMOTE"
-fi
-
-#OUT=`rsync -e "$SSH_CMD" $OPTS "$TM_PROJECT_DIRECTORY"/ "$REMOTE"`
-
-echo -e "&lt;h3&gt;rsync command:&lt;/h3&gt;\n"
-echo -e "&lt;pre&gt;"
-echo -e "rsync -e \"$SSH_CMD\" $OPTS \"$TM_PROJECT_DIRECTORY\"/ \"$REMOTE\""
-echo -e "&lt;/pre&gt;\n"
-echo -e "&lt;h3&gt;Output:&lt;/h3&gt;\n"
-echo -e "&lt;pre&gt;"
-
-rsync -e "$SSH_CMD" $OPTS "$TM_PROJECT_DIRECTORY"/ "$REMOTE"
-
-echo -e "&lt;/pre&gt;\n"
 html_footer
 </string>
 	<key>input</key>
