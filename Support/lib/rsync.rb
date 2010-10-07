@@ -7,7 +7,7 @@ module Rsync
   class ConfigError < StandardError; end
 
   WINDOW = e_sh File.join(ENV['TM_BUNDLE_SUPPORT'], 'nibs/rsync.nib')
-  DIALOG = e_sh ENV['DIALOG'] unless defined?(TM_DIALOG)
+  DIALOG = e_sh ENV['DIALOG']
 
   PARAMS = {
     'SSH_KEY'            => ENV['SSH_KEY'],
