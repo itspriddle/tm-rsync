@@ -42,7 +42,7 @@ if [ "$SSH_USER" != "" ]; then
   REMOTE="$SSH_USER@$REMOTE"
 fi
 
-OUT=`rsync -e "$SSH_CMD" $OPTS "$TM_PROJECT_DIRECTORY"/ "$REMOTE"`
+#OUT=`rsync -e "$SSH_CMD" $OPTS "$TM_PROJECT_DIRECTORY"/ "$REMOTE"`
 
 echo -e "&lt;h3&gt;rsync command:&lt;/h3&gt;\n"
 echo -e "&lt;pre&gt;"
@@ -50,7 +50,9 @@ echo -e "rsync -e \"$SSH_CMD\" $OPTS \"$TM_PROJECT_DIRECTORY\"/ \"$REMOTE\""
 echo -e "&lt;/pre&gt;\n"
 echo -e "&lt;h3&gt;Output:&lt;/h3&gt;\n"
 echo -e "&lt;pre&gt;"
-echo -e "$OUT"
+
+rsync -e "$SSH_CMD" $OPTS "$TM_PROJECT_DIRECTORY"/ "$REMOTE"
+
 echo -e "&lt;/pre&gt;\n"
 html_footer
 </string>
